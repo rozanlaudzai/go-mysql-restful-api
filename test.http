@@ -1,0 +1,34 @@
+### Get all categories
+GET http://localhost:4000/api/categories
+X-API-Key: your-api-key
+Accept: application/json
+
+### Create a new category
+POST http://localhost:4000/api/categories
+X-API-Key: your-api-key
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": ""
+}
+
+### Get a category by id
+GET http://localhost:4000/api/categories/12
+X-API-Key: your-api-key
+Accept: application/json
+
+### Update a category
+PUT http://localhost:4000/api/categories/12
+X-API-Key: your-api-key
+Accept: application/json
+Content-Type: application/json
+
+{
+  "kintil": "walawe"
+}
+
+### Delete a category by id
+DELETE http://localhost:4000/api/categories/13
+X-API-Key: your-api-key
+Accept: application/json
