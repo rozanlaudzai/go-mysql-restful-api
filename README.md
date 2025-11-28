@@ -32,7 +32,7 @@ The application requires the following environment variables to be set. You can 
 Before running the application, ensure your MySQL instance is running and the database is initialized.
 
 1.  Create a database matching your `DB_NAME`.
-2.  Run the initialization script to create the required tables:
+2.  Run the initialization script to create the required table:
     * [initial_query.sql](initial_query.sql)
 
 ## 🏁 Getting Started
