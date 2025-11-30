@@ -498,7 +498,7 @@ curl -X DELETE http://localhost:3000/api/categories/1 \
 
 ### Using HTTP File
 
-The project includes a `test.http` file with example requests that can be used with REST Client extensions in VS Code or IntelliJ IDEA.
+The project includes a `test.http` file with example requests that can be used with REST Client extensions in VSCode or JetBrains IDEs.
 
 ## 🏗️ Architecture
 

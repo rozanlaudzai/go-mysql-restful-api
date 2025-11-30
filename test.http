@@ -25,7 +25,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "kintil": "walawe"
+  "name": "walaue"
 }
 
 ### Delete a category by id
