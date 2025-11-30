@@ -2,66 +2,100 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Category RESTful API",
-    "description": "API Spec for Category RESTful API",
+    "description": "A RESTful API for category management built with Go and MySQL. This API provides full CRUD operations for categories with API key authentication, input validation, and error handling.",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://localhost:4000/api"
+      "url": "http://localhost:3000/api",
+      "description": "Development server (default port)"
+    },
+    {
+      "url": "http://localhost:{port}/api",
+      "description": "Custom port server",
+      "variables": {
+        "port": {
+          "default": "3000",
+          "description": "Server port number"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Categories",
+      "description": "Operations related to category management"
     }
   ],
   "paths": {
     "/categories": {
       "get": {
+        "summary": "Get all categories",
+        "description": "Retrieves a list of all categories in the system. Returns an empty array if no categories exist.",
+        "operationId": "getAllCategories",
+        "tags": ["Categories"],
         "security": [
           {
             "CategoryAuth": []
           }
         ],
-        "tags": ["Category API"],
-        "description": "Get all categories",
-        "summary": "Get all categories",
         "responses": {
           "200": {
             "description": "Successfully retrieved all categories",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "number"
+                  "$ref": "#/components/schemas/CategoryListResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "Electronics"
                     },
-                    "status": {
-                      "type": "string"
+                    {
+                      "id": 2,
+                      "name": "Fashion"
                     },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Category"
-                      }
+                    {
+                      "id": 3,
+                      "name": "Books"
                     }
-                  }
+                  ]
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
           }
         }
       },
       "post": {
+        "summary": "Create a new category",
+        "description": "Creates a new category with the provided name. The name must be between 1 and 200 characters and cannot be empty.",
+        "operationId": "createCategory",
+        "tags": ["Categories"],
         "security": [
           {
             "CategoryAuth": []
           }
         ],
-        "tags": ["Category API"],
-        "description": "Create a new category",
-        "summary": "Create a new category",
         "requestBody": {
+          "required": true,
+          "description": "Category creation request",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateOrUpdateCategory"
+                "$ref": "#/components/schemas/CategoryCreateRequest"
+              },
+              "example": {
+                "name": "Electronics"
               }
             }
           }
@@ -72,149 +106,201 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "number"
-                    },
-                    "status": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Category"
-                    }
+                  "$ref": "#/components/schemas/CategoryResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "Electronics"
                   }
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
           }
         }
       }
     },
     "/categories/{categoryId}": {
       "get": {
+        "summary": "Get category by ID",
+        "description": "Retrieves a specific category by its unique identifier. Returns 404 if the category does not exist.",
+        "operationId": "getCategoryById",
+        "tags": ["Categories"],
         "security": [
           {
             "CategoryAuth": []
           }
         ],
-        "tags": ["Category API"],
-        "summary": "Get a category by Id",
-        "description": "Get a category by Id",
         "parameters": [
           {
             "name": "categoryId",
             "in": "path",
-            "description": "Category Id"
+            "required": true,
+            "description": "Unique identifier of the category",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 1
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved a category",
+            "description": "Successfully retrieved the category",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "number"
-                    },
-                    "status": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Category"
-                    }
+                  "$ref": "#/components/schemas/CategoryResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "Electronics"
                   }
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
           }
         }
       },
       "put": {
+        "summary": "Update category by ID",
+        "description": "Updates an existing category with the provided name. The category ID is specified in the path parameter. The name must be between 1 and 200 characters and cannot be empty. Returns 404 if the category does not exist.",
+        "operationId": "updateCategory",
+        "tags": ["Categories"],
         "security": [
           {
             "CategoryAuth": []
           }
         ],
-        "tags": ["Category API"],
-        "summary": "Update a category by Id",
-        "description": "Update a category by Id",
         "parameters": [
           {
             "name": "categoryId",
             "in": "path",
-            "description": "Category Id"
+            "required": true,
+            "description": "Unique identifier of the category to update",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 1
+            }
           }
         ],
         "requestBody": {
+          "required": true,
+          "description": "Category update request",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateOrUpdateCategory"
+                "$ref": "#/components/schemas/CategoryUpdateRequest"
+              },
+              "example": {
+                "name": "Updated Electronics"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved a category",
+            "description": "Successfully updated the category",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "number"
-                    },
-                    "status": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Category"
-                    }
+                  "$ref": "#/components/schemas/CategoryResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "Updated Electronics"
                   }
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
           }
         }
       },
       "delete": {
+        "summary": "Delete category by ID",
+        "description": "Deletes a category by its unique identifier. Returns 404 if the category does not exist.",
+        "operationId": "deleteCategory",
+        "tags": ["Categories"],
         "security": [
           {
             "CategoryAuth": []
           }
         ],
-        "tags": ["Category API"],
-        "summary": "Delete a category by Id",
-        "description": "Delete a category by Id",
         "parameters": [
           {
             "name": "categoryId",
             "in": "path",
-            "description": "Category Id"
+            "required": true,
+            "description": "Unique identifier of the category to delete",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 1
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully deleted a category",
+            "description": "Successfully deleted the category",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "number"
-                    },
-                    "status": {
-                      "type": "string"
-                    }
-                  }
+                  "$ref": "#/components/schemas/DeleteResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK"
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
           }
         }
       }
@@ -224,20 +310,216 @@
     "schemas": {
       "Category": {
         "type": "object",
+        "description": "Category entity with unique identifier and name",
+        "required": ["id", "name"],
         "properties": {
           "id": {
-            "type": "number"
+            "type": "integer",
+            "description": "Unique identifier for the category",
+            "minimum": 1,
+            "example": 1
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Category name",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "Electronics"
           }
         }
       },
-      "CreateOrUpdateCategory": {
+      "CategoryCreateRequest": {
         "type": "object",
+        "description": "Request payload for creating a new category",
+        "required": ["name"],
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Category name (required, 1-200 characters)",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "Electronics"
+          }
+        }
+      },
+      "CategoryUpdateRequest": {
+        "type": "object",
+        "description": "Request payload for updating an existing category. Note: The category ID is provided in the URL path, not in the request body.",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Updated category name (required, 1-200 characters)",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "Updated Electronics"
+          }
+        }
+      },
+      "WebResponse": {
+        "type": "object",
+        "description": "Standard API response wrapper",
+        "required": ["code", "status"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "description": "Status message",
+            "example": "OK"
+          },
+          "data": {
+            "description": "Response data (varies by endpoint)",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Category"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      "CategoryResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WebResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Category"
+              }
+            }
+          }
+        ]
+      },
+      "CategoryListResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WebResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "DeleteResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WebResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error response format",
+        "required": ["code", "status", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "example": 400
+          },
+          "status": {
+            "type": "string",
+            "description": "Error status message",
+            "example": "BAD REQUEST"
+          },
+          "data": {
+            "type": "string",
+            "description": "Error message or description",
+            "example": "invalid fields"
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequestError": {
+        "description": "Bad request - validation error or invalid input",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "code": 400,
+              "status": "BAD REQUEST",
+              "data": "invalid fields"
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "description": "Unauthorized - missing or invalid API key",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "code": 401,
+              "status": "UNAUTHORIZED",
+              "data": ""
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Not found - the requested resource does not exist",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "code": 404,
+              "status": "NOT FOUND",
+              "data": "category not found"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal server error - unexpected server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "code": 500,
+              "status": "INTERNAL SERVER ERROR",
+              "data": "internal server error"
+            }
           }
         }
       }
@@ -247,7 +529,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "X-API-Key",
-        "description": "Authentication for Category API"
+        "description": "API Key authentication. Include your API key in the X-API-Key header for all requests. The API key is configured via the API_KEY environment variable."
       }
     }
   }
