@@ -38,7 +38,7 @@ A RESTful API designed for category management, built with Go and MySQL. This pr
 * **Input Validation:** Request validation using `go-playground/validator`
 * **Error Handling:** Comprehensive error handling with custom exceptions and panic recovery
 * **Database Connection Pooling:** Optimized database connections with configurable pool settings
-* **Comprehensive Testing:** Unit tests covering all endpoints and edge cases
+* **Unit Tests:** Unit tests covering all endpoints and edge cases
 * **OpenAPI Specification:** Complete API documentation in OpenAPI 3.0 format
 
 ## 🛠️ Tech Stack
@@ -96,15 +96,15 @@ go-mysql-restful-api/
 
 The application requires the following environment variables to be set. You can export them in your terminal or use a `.env` file (loaded automatically via `godotenv`).
 
-| Variable      | Description                                  | Example Value      | Required |
-| :------------ | :------------------------------------------- | :----------------- | :------- |
-| `DB_USERNAME` | MySQL database username                      | `root`             | Yes      |
-| `DB_PASSWORD` | MySQL database password                      | `password123`      | Yes      |
-| `DB_HOST`     | Database host address                        | `localhost`        | Yes      |
-| `DB_PORT`     | Database port                                | `3306`             | Yes      |
-| `DB_NAME`     | Name of the database schema                  | `go_restful_api`   | Yes      |
-| `SERVER_PORT` | The port the API server will listen on       | `3000`             | Yes      |
-| `API_KEY`     | The secret key required for request headers  | `secret-api-key`   | Yes      |
+| Variable      | Description                                  | Example Value      |
+| :------------ | :------------------------------------------- | :----------------- |
+| `DB_USERNAME` | MySQL database username                      | `root`             |
+| `DB_PASSWORD` | MySQL database password                      | `password123`      |
+| `DB_HOST`     | Database host address                        | `localhost`        |
+| `DB_PORT`     | Database port                                | `3306`             |
+| `DB_NAME`     | Name of the database schema                  | `go_restful_api`   |
+| `SERVER_PORT` | The port the API server will listen on       | `3000`             |
+| `API_KEY`     | The secret key required for request headers  | `secret-api-key`   |
 
 ### Example `.env` file:
 
